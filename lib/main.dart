@@ -5,6 +5,95 @@ void main() {
   runApp(const MyApp());
 }
 
+class CircleIcon extends StatelessWidget {
+  const CircleIcon({
+    Key? key,
+    required this.icon,
+    required this.backgroundColor,
+    this.size = 40,
+    required this.tooltipText,
+  }) : super(key: key);
+
+  final IconData icon;
+  final Color backgroundColor;
+  final double size;
+  final String tooltipText;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.all(
+          Radius.circular(size / 2),
+        ),
+      ),
+      child: Tooltip(
+        child: Icon(icon),
+        message: tooltipText,
+      ),
+    );
+  }
+}
+
+final circleIconComponent = Component(
+  name: 'CircleIcon',
+  markdownString: 'An icon displayed in a colored circle.',
+  builder: (BuildContext context, Arguments args, Globals globals) {
+    return CircleIcon(
+      icon: args.value('icon'),
+      backgroundColor: args.value('backgroundColor'),
+      size: args.value('size'),
+      tooltipText: args.value('tooltipText'),
+    );
+  },
+  argTypes: [
+    ArgType<IconData>(
+      name: 'icon',
+      description: 'The icon to display',
+      isRequired: true,
+    ),
+    ArgType<Color>(
+      name: 'backgroundColor',
+      description: 'The color of the circle behind the icon',
+      isRequired: true,
+    ),
+    ArgType<double>(
+      name: 'size',
+      description: 'The diameter of the circle',
+      defaultValue: 40,
+    ),
+    ArgType<String>(
+      name: 'tooltipText',
+      description: 'The text to display in a tooltip when the cirlce is hovered',
+      isRequired: true,
+    ),
+  ],
+  stories: [
+    Story(
+      name: 'Basic',
+      args: {
+        'icon': Icons.message,
+        'backgroundColor': Colors.amber,
+        'tooltipText': 'Message',
+      },
+    ),
+    Story(
+      name: 'Error',
+      markdownString: 'Used to indicate in error in our app.',
+      useControls: false,
+      args: {
+        'icon': Icons.warning,
+        'backgroundColor': Colors.red,
+        'tooltipText': 'Message',
+      },
+    ),
+  ],
+);
+
 final Component textComponent = Component(
   name: 'Card',
   markdownFile: 'test.md',
@@ -131,12 +220,13 @@ class MyApp extends StatelessWidget {
           // ),
           ),
       explorer: [
-        RootItem(name: 'Library', children: [
+        circleIconComponent,
+        Root(name: 'Library', children: [
           Documentation(
             name: 'Introduction',
             markdownFile: 'test.md',
           ),
-          FolderItem(
+          Folder(
             name: 'Widgets',
             children: [
               buttonComponent,
